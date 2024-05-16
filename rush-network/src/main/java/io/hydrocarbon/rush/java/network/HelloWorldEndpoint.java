@@ -1,0 +1,77 @@
+package io.hydrocarbon.rush.java.network;
+
+import jakarta.websocket.*;
+import jakarta.websocket.server.ServerEndpoint;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * @author Zou Zhenfeng
+ * @since 2024-05-16
+ */
+@ServerEndpoint("/hello")
+@Slf4j
+public class HelloWorldEndpoint extends Endpoint {
+
+    @OnMessage
+    public void onMessage(String message) {
+        log.info("收到消息: {}", message);
+    }
+
+    /**
+     * This method is called immediately prior to the session with the remote peer being closed. It is called whether
+     * the session is being closed because the remote peer initiated a close and sent a close frame, or whether the
+     * local websocket container or this endpoint requests to close the session. The developer may take this last
+     * opportunity to retrieve session attributes such as the ID, or any application data it holds before it becomes
+     * unavailable after the completion of the method. Developers should not attempt to modify the session from within
+     * this method, or send new messages from this call as the underlying connection will not be able to send them at
+     * this stage.
+     *
+     * @param session     the session about to be closed.
+     * @param closeReason the reason the session was closed.
+     */
+    @Override
+    public void onClose(Session session, CloseReason closeReason) {
+        super.onClose(session, closeReason);
+    }
+
+    /**
+     * Developers may implement this method when the web socket session creates some kind of error that is not modeled
+     * in the web socket protocol. This may for example be a notification that an incoming message is too big to handle,
+     * or that the incoming message could not be encoded.
+     *
+     * <p>
+     * There are a number of categories of exception that this method is (currently) defined to handle:
+     * <ul>
+     * <li>connection problems, for example, a socket failure that occurs before the web socket connection can be
+     * formally closed. These are modeled as {@link SessionException}s</li>
+     * <li>runtime errors thrown by developer created message handlers calls.</li>
+     * <li>conversion errors encoding incoming messages before any message handler has been called. These are modeled as
+     * {@link DecodeException}s</li>
+     * </ul>
+     *  @param session the session in use when the error occurs.
+     *
+     * @param thr the throwable representing the problem.
+     */
+    @Override
+    public void onError(Session session, Throwable thr) {
+        super.onError(session, thr);
+    }
+
+    /**
+     * Developers must implement this method to be notified when a new conversation has just begun.
+     * <p>
+     * Note:
+     * <ul>
+     * <li>It is permitted to send messages from this method.</li>
+     * <li>It is permitted to add {@link MessageHandler}s from this method. No messages will be
+     *     mapped to the appropriate {@link MessageHandler} until this method has completed.</li>
+     * </ul>
+     *  @param session the session that has just been activated.
+     *
+     * @param config the configuration used to configure this endpoint.
+     */
+    @Override
+    public void onOpen(Session session, EndpointConfig config) {
+        log.info("新连接: {}", session.getId());
+    }
+}
